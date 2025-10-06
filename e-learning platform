@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini E-Learning Platform</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .course-card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .course-card:hover {
+      transform: translateY(-3px);
+      background: #f0fff4;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .lesson {
+      background: #fff;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-btn {
+      background: #555;
+    }
+
+    .back-btn:hover {
+      background: #333;
+    }
+
+    .progress {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mini E-Learning Platform</h1>
+  </header>
+
+  <div class="container" id="app"></div>
+
+  <script>
+    // Course data
+    const courses = [
+      {
+        id: 1,
+        title: "Introduction to HTML",
+        description: "Learn the basics of HTML.",
+        lessons: ["What is HTML?", "Basic Tags", "Creating a Simple Page"],
+        completedLessons: []
+      },
+      {
+        id: 2,
+        title: "CSS for Beginners",
+        description: "Style your web pages with CSS.",
+        lessons: ["Selectors", "Colors & Fonts", "Layout Basics"],
+        completedLessons: []
+      },
+      {
+        id: 3,
+        title: "JavaScript Basics",
+        description: "Get started with JavaScript programming.",
+        lessons: ["Variables & Data Types", "Functions", "DOM Manipulation"],
+        completedLessons: []
+      }
+    ];
+
+    let currentCourse = null;
+
+    const app = document.getElementById("app");
+
+    // Render home page
+    function renderHome() {
+      currentCourse = null;
+      app.innerHTML = "<h2>Available Courses</h2>";
+      courses.forEach(course => {
+        const card = document.createElement("div");
+        card.className = "course-card";
+        card.innerHTML = `
+          <h3>${course.title}</h3>
+          <p>${course.description}</p>
+          <p>Progress: ${course.completedLessons.length}/${course.lessons.length}</p>
+        `;
+        card.onclick = () => renderCourseDetail(course.id);
+        app.appendChild(card);
+      });
+    }
+
+    // Render course detail page
+    function renderCourseDetail(courseId) {
+      const course = courses.find(c => c.id === courseId);
+      currentCourse = course;
+
+      app.innerHTML = `
+        <button class="back-btn" onclick="renderHome()">⬅ Back to Courses</button>
+        <h2>${course.title}</h2>
+        <p>${course.description}</p>
+        <div id="lessons"></div>
+        <div class="progress">Progress: ${course.completedLessons.length}/${course.lessons.length}</div>
+      `;
+
+      const lessonsDiv = document.getElementById("lessons");
+      course.lessons.forEach((lesson, index) => {
+        const lessonDiv = document.createElement("div");
+        lessonDiv.className = "lesson";
+        const isCompleted = course.completedLessons.includes(index);
+        lessonDiv.innerHTML = `
+          <span>${lesson}</span>
+          <button onclick="markLessonCompleted(${course.id}, ${index})">
+            ${isCompleted ? "Completed ✅" : "Mark as Completed"}
+          </button>
+        `;
+        lessonsDiv.appendChild(lessonDiv);
+      });
+    }
+
+    // Mark lesson as completed
+    function markLessonCompleted(courseId, lessonIndex) {
+      const course = courses.find(c => c.id === courseId);
+      if (!course.completedLessons.includes(lessonIndex)) {
+        course.completedLessons.push(lessonIndex);
+      }
+      renderCourseDetail(courseId);
+    }
+
+    // Initial render
+    renderHome();
+  </script>
+</body>
+</html>
